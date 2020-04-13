@@ -1,0 +1,409 @@
+# Scenario 1
+#!/bin/bash
+read -e -p &quot;log directory: &quot; log_directory
+read -e -p &quot;file extension: &quot; extension
+read -e -p &quot;backup directory: &quot; backup_directory  
+tar czf archive123.tar.gz $(find $log_directory -name “*.$extension”)
+mv archive123.tar.gz $backup_directory
+rm  $(find $log_directory -name”*.$extension”)
+exit 0
+
+
+
+
+# Scenario 2
+
+#!/bin/bash
+read -p "archivefiles_directory: " archive_directory 
+//Reads the archive directory. 
+find $(realpath "$archive_directory") -name *.tar -mtime +2 –delete 
+//Finds path for archive directory and deletes it.
+if !( crontab -l | grep -Fq "* * * * * /home/ubuntu/scenario2.sh" ); 
+//Checks if crontab is scheduled
+then
+crontab -l | { cat; echo "* * * * * /home/ubuntu/scenario2.sh";} | crontab - 
+//Schedules crobtab if not scheduled.
+fi
+echo "script added to cron"
+
+
+
+
+# Scenario 3
+
+#!/bin/bash 
+if [ -z "$1" ]; then    //checks whether the user has input the credentials or not
+    echo "ERROR: Credentials file not specified" >&2; exit 1; //&2 refers to stderr
+elif [ -z "$2" ]; then  //checks whether the user has input the backup directory or not
+    echo "ERROR: Backup directory not specified" >&2; exit 1;
+fi
+credentials_file=$(realpath $1)     //realpath prints the resolved absolute file name
+backup_directory=$(realpath $2)
+if [ ! -f "$credentials_file" ]; then  //-f is used to check for the file name following it
+    echo "ERROR: Credentials file does not exist" >&2; exit 1;
+elif [ ! -d "$backup_directory" ]; then  //-d is used to refer the directory
+    echo "ERROR: Backup directory does not exist" >&2; exit 1;
+fi
+source $credentials_file  //the keyword source executes the file passed as an argument to it
+if [ -z ${hostname:+word} ]; then  //checks whether the hostname is there or not
+    echo "ERROR: hostname is not set" >&2; exit 1;
+elif [ -z ${username:+word} ]; then  //checks whether the username is there or not
+    echo "ERROR: username is not set" >&2; exit 1;
+elif [ -z ${password:+word} ]; then   //checks whether the password is given or not
+    echo "ERROR: password is not set" >&2; exit 1;
+fi
+mysqldump -h$hostname -u$username -p$password --all-databases > backup.sql 
+//the above statement passes the entered arguments to the mysql dump file
+//the mysqldump stores the backup of the database sessions at the specified location
+if [[ $? != 0 ]]; then    //$? Checks for the returned value of last executed statement
+    echo "ERROR: Error in taking mysql backup" >&2; exit 1;
+fi
+mv backup.sql $backup_directory/$(date +%F_%R).sql 
+//moves the backup to a new directory, %F and %R are used the display date
+path_to_script=$(realpath "$0")
+if ! (crontab -l | grep -Fxq "0 */12 * * * $path_to_script $credentials_file $backup_directory"); then
+    crontab -l | { cat; echo "0 */12 * * * $path_to_script $credentials_file $backup_directory"; } | crontab -
+    echo "Script added to Cron"
+fi
+exit 0
+
+
+
+
+
+# Scenario 4
+
+#!/bin/bash
+if [ -f "$access_log.txt" ]; then
+    rm $accesse_log.txt
+fi
+
+if [ -f "$error_log.txt" ]; then
+    rm $error_log.txt
+fi
+
+cat /var/log/apache2/access_log > /Users/isshu/Desktop/case_study4/access_log.txt
+cat /var/log/apache2/error_log > /Users/isshu/Desktop/case_study4/error_log.txt
+
+read -e -p "Enter the name of the Access logs of HTTP  web server: " access_logfile
+read -e -p "Enter the name of the Error logs of the HTTP web server: " error_logfile
+read -e -p "Enter the Email ID: " Email
+
+access_log1=$(realpath $access_logfile)
+error_log1=$(realpath $error_logfile)
+if [ ! -f "$access_log1" ]; then
+    echo "ERROR: The access log file does not exist" >&2; exit 1;
+fi
+
+if [ ! -f "$error_log1" ]; then 
+    echo "ERROR: The error log file does not exist" >&2; exit 1;
+fi
+
+cat $access_log1 | mail -s "Apache web server access logs" $Email
+if [[ $? != 0 ]]; then
+     echo "ERROR: Error in sending access log to email to $Email" >&2; exit 1;
+fi
+
+cat $error_log1 | mail -s "Apache web server error logs" $Email
+if [[ $? != 0 ]]; then
+     echo "ERROR: Error in sending error log to mail to $Email" >&2; exit 1;
+fi
+
+echo "The access and error logs both are successfully sent to $Email"
+exit 0
+
+
+
+
+# Scenario 5
+
+# bin/bash 
+a=`echo $?`  
+read -p "Enter listening port : " listening_port 
+//Used to ask for input of listening port. 
+netstat -au | grep -q ":listening_port" 
+b=`echo $?` 
+if [ $b != $a ]; 
+//Gives status if that port is on or not 
+then 
+echo "ERROR, Web server is not running" >&2 
+/etc/init.d/apache2 restart 
+//Prints error if not running and restarts the server 
+fi 
+backupfolder="/home/kshitiz/backups" 
+cp -r /var/log/apache2/ $backupfolder 
+//Backups the logs in a backup folder 
+netstat -au 
+netstat –lu 
+//Prints status of web server.
+
+
+
+
+
+# Scenario 6
+
+
+#!/bin/bash
+i=0
+b=0
+while [ $i -le 2 ]
+do
+read A
+result= $A
+a=`echo $?`
+echo $a
+if [ $a -eq $b ]; then
+echo "Command is Valid"
+else
+echo "Command is Invalid"
+fi
+((i++))
+done
+
+
+
+# Scenario 7
+
+
+#!/bin/bash
+
+read -p "Enter device name: " dname
+read -p "Enter threshold limit in bytes: " dlimit
+
+echo "/dev/$dname"
+
+if [ $( ls /dev/ | grep $dname ) == $dname ]
+then
+echo "$dname device exists"
+
+
+if [ ! $( blockdev --getsize64 /dev/$dname ) -ge $dlimit ]
+then
+echo "$( date ) :  $dname threshold limit $dlimit is greater than size " >> device.log
+fi
+
+if [ $( blockdev --getsize64 /dev/$dname ) -ge $dlimit ]
+then
+
+if [ $( df | grep $dname | wc -l ) -eq 1 ]
+then
+
+if [ $dlimit -ge $( df --output=avail /dev/$dname | tail -n +2 ) ]
+then
+echo "$( date ) :  $dname threshold limit $dlimit reached " >> device.log
+echo "$dname threshold reached!!" >> /etc/motd
+fi
+
+else
+echo "device not mounted !"
+fi	
+
+
+fi
+
+
+else
+echo "$dname device does not exist"
+echo "$( date ) :  $dname device does not exist " >> device.log
+fi
+
+
+
+
+# Scenario 8
+
+#!/bin/bash   // called bang which indicate that we have to write script ,if anything comes after it doesnot interrupt//
+recycle_bin="$HOME/.recycle_bin"    // this command tells us about the location of recycle bin//
+rm="/bin/rm -r "  // So /bin/rm -r remove file with name filename from your system silently.//
+copy="/bin/cp -r "  // Copying a directory, first to a new, and then to an existing destination directory//
+if [ $# -eq 0 ] ; then  // # Must have command-line args to demo script//
+
+echo "ERROR: Please enter the file path to delete." >&2; exit 1; // this command takes an argument with path file you want to delete
+fi
+flags=""
+while  getopts   "dfiPRrvW"   args; do
+case $args in
+f ) exec $rm "$@" ;;  # exec lets us exit this script directly.
+* ) flags="$flags -$args" ;;  # other flags are for 'rm', not us
+esac
+done
+shift $(( $OPTIND - 1 ))
+if [ ! -d $recycle_bin ] ; then
+mkdir $recycle_bin
+fi
+for arg; do
+newname="$recycle_bin/$(date "+%S.%M.%H.%d.%m").$(basename "$arg")"
+if [ -f "$arg" ] ; then
+$copy "$arg" "$newname"
+elif [ -d "$arg" ] ; then
+$copy "$arg" "$newname"
+fi
+done
+exec $rm $flags "$@"
+exit 0
+
+
+
+# Scenario 10
+
+In .baschrc file write :
+
+function rmfile()
+{
+	a=$@
+	rm $@
+	echo “$(date)  deleted->  $(realpath $a)” >> /home/shashwat/myLogs/delete.logs        //created log file previously
+}
+
+In terminal instread of rm command use rmfile:
+rmfile f1.txt f2.txt      etc.
+
+
+# Scenario 11
+
+
+# taking bash as default bin
+#!/bin/bash
+
+# providing path for files to be traversed
+FILES=/home/neha/myfile/DevAuto/*
+# start for loop
+for f in $FILES
+do
+	# take action on each file. $f store current file name
+  echo "Processing $f"
+ 	#wide spaced line
+  echo -en '\n'  
+	# count of lines and the characters
+  wc $f
+  echo -en '\n'
+	#to get the owner of the file
+  #ls -l $f
+  stat -c "%U" $($f)
+	# counter to indicate the line numbers of the file
+  cat -n $f
+  echo -en '\n'
+  echo -en '\n'
+  echo -en '\n'
+done
+
+
+
+
+# Scenario 12
+
+
+#!/bin/bash
+	read -p "enter the password: " password
+	read -p "enter the file to be encrypted: " fname
+	name=$(find /home/ajay/ -name $fname)
+	if [ -f "$name" ]
+	then
+	 echo "$name"
+	 gpg -c --batch --passphrase $password $name
+	 rm $name
+	fi
+	if [ -d "$name" ]
+	then
+	 for f in "$name"/*;
+	 do
+	   gpg -c --batch --passphrase $password $f
+	   rm $f
+	 done
+	fi
+
+
+
+
+# Scenario 13
+
+
+#!/bin/bash
+	read -p "enter the password: " password
+	read -p "enter the file to be encrypted: " fname
+	name=$(find /home/ajay/ -name $fname)
+	if [ -f "$name" ]
+	then
+	 if [ ${name: -4} == ".gpg" ]
+	  then
+	   filename="${name%.*}"
+	   result=$(gpg -d --batch --passphrase $password $name)
+	   echo "$result">>$filename
+	   rm $name
+	  fi
+	fi
+	if [ -d "$name" ]
+	then
+	 for f in "$name"/*;
+	 do
+	  if [ ${f: -4} == ".gpg" ]
+	  then
+	   filename="${f%.*}"
+	   result=$(gpg -d --batch --passphrase $password $f)
+	   echo "$result">>$filename
+	   rm $f
+	  fi
+	 done
+	fi
+
+
+
+
+# Scenario 14
+
+
+Use the following commands in Linux terminal and show its usage
+
+MODULE CONSIST OF:
+1.DATE
+2.W
+3.LAST
+4.DF
+5.FREE
+6.TOP
+7.NETSTAT
+8.SS
+
+
+
+
+# Scenario 15
+
+#!/bin/bash
+downloads_directory="$HOME/Downloads"
+if [ -z "$1" ]; then
+echo "ERROR: Download List file is not specified in the arguments" >&2;
+exit 1;
+fi
+if ! [ -z "$2" ]; then
+downloads_directory=$2
+fi
+if [ ! -d $downloads_directory ] ; then
+mkdir -p $downloads_directory
+fi
+download_list=$1
+cat $download_list | while read url; do
+echo "-------------------------------------------------------------------"
+echo "$url"
+wget -P $downloads_directory $url
+done
+exit 0
+
+
+
+
+# Scenario 17
+
+#!/bin/bash
+
+if[ $( ifconfig | grep -o $1 ) == $1 ]
+then 
+ifconfig $1 | sed 3,8d | sed 1d
+echo " Public IP: "
+curl --interface $1 http://ifconfig.co
+
+else
+echo "NIC does not exist"
+exit 125
+fi
