@@ -1,8 +1,8 @@
 # DEVELOPMENT_AUTOMATION
 
- # ALL 17 CASE STUDIES : -
+ 1.# ALL 17 CASE STUDIES : -
 
- # SHELL_SCRIPTING : -
+ 2.# SHELL_SCRIPTING : -
 
  Shell scripting is writing a series of command for the shell to execute. It can combine lengthy and repetitive sequences of commands into a simple script, which can be stored and executed anytime. This reduces the time and effort required by the end user.
 
