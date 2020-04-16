@@ -13,3 +13,5 @@
  * Write some code.
  * Save the script file as filename.sh
  * For executing the script type bash filename.sh
+
+ # STUDY_MATERIAL
