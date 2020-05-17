@@ -1,0 +1,21 @@
+# Scenario 5
+
+# bin/bash 
+a=`echo $?`  
+read -p "Enter listening port : " listening_port 
+//Used to ask for input of listening port. 
+netstat -au | grep -q ":listening_port" 
+b=`echo $?` 
+if [ $b != $a ]; 
+//Gives status if that port is on or not 
+then 
+echo "ERROR, Web server is not running" >&2 
+/etc/init.d/apache2 restart 
+//Prints error if not running and restarts the server 
+fi 
+backupfolder="/home/kshitiz/backups" 
+cp -r /var/log/apache2/ $backupfolder 
+//Backups the logs in a backup folder 
+netstat -au 
+netstat –lu 
+//Prints status of web server.
