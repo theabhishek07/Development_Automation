@@ -1,0 +1,14 @@
+# Scenario 2
+
+#!/bin/bash
+read -p "archivefiles_directory: " archive_directory 
+//Reads the archive directory. 
+find $(realpath "$archive_directory") -name *.tar -mtime +2 –delete 
+//Finds path for archive directory and deletes it.
+if !( crontab -l | grep -Fq "* * * * * /home/ubuntu/scenario2.sh" ); 
+//Checks if crontab is scheduled
+then
+crontab -l | { cat; echo "* * * * * /home/ubuntu/scenario2.sh";} | crontab - 
+//Schedules crobtab if not scheduled.
+fi
+echo "script added to cron"
