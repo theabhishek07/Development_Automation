@@ -1,0 +1,13 @@
+# Scenario 10
+
+In .baschrc file write :
+
+function rmfile()
+{
+	a=$@
+	rm $@
+	echo “$(date)  deleted->  $(realpath $a)” >> /home/shashwat/myLogs/delete.logs        //created log file previously
+}
+
+In terminal instread of rm command use rmfile:
+rmfile f1.txt f2.txt      etc.
