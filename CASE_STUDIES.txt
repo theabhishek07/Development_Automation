@@ -1,37 +1,3 @@
-# Scenario 8
-
-#!/bin/bash   // called bang which indicate that we have to write script ,if anything comes after it doesnot interrupt//
-recycle_bin="$HOME/.recycle_bin"    // this command tells us about the location of recycle bin//
-rm="/bin/rm -r "  // So /bin/rm -r remove file with name filename from your system silently.//
-copy="/bin/cp -r "  // Copying a directory, first to a new, and then to an existing destination directory//
-if [ $# -eq 0 ] ; then  // # Must have command-line args to demo script//
-
-echo "ERROR: Please enter the file path to delete." >&2; exit 1; // this command takes an argument with path file you want to delete
-fi
-flags=""
-while  getopts   "dfiPRrvW"   args; do
-case $args in
-f ) exec $rm "$@" ;;  # exec lets us exit this script directly.
-* ) flags="$flags -$args" ;;  # other flags are for 'rm', not us
-esac
-done
-shift $(( $OPTIND - 1 ))
-if [ ! -d $recycle_bin ] ; then
-mkdir $recycle_bin
-fi
-for arg; do
-newname="$recycle_bin/$(date "+%S.%M.%H.%d.%m").$(basename "$arg")"
-if [ -f "$arg" ] ; then
-$copy "$arg" "$newname"
-elif [ -d "$arg" ] ; then
-$copy "$arg" "$newname"
-fi
-done
-exec $rm $flags "$@"
-exit 0
-
-
-
 # Scenario 10
 
 In .baschrc file write :
