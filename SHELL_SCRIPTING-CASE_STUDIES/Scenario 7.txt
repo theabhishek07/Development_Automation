@@ -1,0 +1,44 @@
+# Scenario 7
+
+
+#!/bin/bash
+
+read -p "Enter device name: " dname
+read -p "Enter threshold limit in bytes: " dlimit
+
+echo "/dev/$dname"
+
+if [ $( ls /dev/ | grep $dname ) == $dname ]
+then
+echo "$dname device exists"
+
+
+if [ ! $( blockdev --getsize64 /dev/$dname ) -ge $dlimit ]
+then
+echo "$( date ) :  $dname threshold limit $dlimit is greater than size " >> device.log
+fi
+
+if [ $( blockdev --getsize64 /dev/$dname ) -ge $dlimit ]
+then
+
+if [ $( df | grep $dname | wc -l ) -eq 1 ]
+then
+
+if [ $dlimit -ge $( df --output=avail /dev/$dname | tail -n +2 ) ]
+then
+echo "$( date ) :  $dname threshold limit $dlimit reached " >> device.log
+echo "$dname threshold reached!!" >> /etc/motd
+fi
+
+else
+echo "device not mounted !"
+fi	
+
+
+fi
+
+
+else
+echo "$dname device does not exist"
+echo "$( date ) :  $dname device does not exist " >> device.log
+fi
