@@ -1,34 +1,3 @@
-# Scenario 11
-
-
-# taking bash as default bin
-#!/bin/bash
-
-# providing path for files to be traversed
-FILES=/home/neha/myfile/DevAuto/*
-# start for loop
-for f in $FILES
-do
-	# take action on each file. $f store current file name
-  echo "Processing $f"
- 	#wide spaced line
-  echo -en '\n'  
-	# count of lines and the characters
-  wc $f
-  echo -en '\n'
-	#to get the owner of the file
-  #ls -l $f
-  stat -c "%U" $($f)
-	# counter to indicate the line numbers of the file
-  cat -n $f
-  echo -en '\n'
-  echo -en '\n'
-  echo -en '\n'
-done
-
-
-
-
 # Scenario 12
 
 
