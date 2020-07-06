@@ -14,4 +14,4 @@
  * Save the script file as filename.sh
  * For executing the script type bash filename.sh
 
- # 3. STUDY_MATERIAL
+ # 3. STUDY_MATERIAL.
