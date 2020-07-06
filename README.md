@@ -15,3 +15,4 @@
  * For executing the script type bash filename.sh
 
  # 3. STUDY_MATERIAL.
+   Specially for university exams.
